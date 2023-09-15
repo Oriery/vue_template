@@ -3,6 +3,7 @@
     <p class="underline">
       This text is styled with underline by Tailwind
     </p>
+    <v-btn>Vuetify button</v-btn>
 
     <nav class="flex flex-row gap-2 justify-center">
       <RouterLink 
