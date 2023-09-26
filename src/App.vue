@@ -17,7 +17,7 @@
     </nav>
   </header>
 
-  <RouterView />
+  <RouterView class="grow"/>
 </template>
 
 <script setup lang="ts">
