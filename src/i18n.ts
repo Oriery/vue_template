@@ -35,7 +35,24 @@ export function isLocaleSupported(locale: Locale): boolean {
 }
 
 export function setupI18n(options: I18nOptions = { locale: 'en' }): I18n {
-  i18n = createI18n(options)
+  i18n = createI18n({
+    ...options,
+    missing: (locale, key, vm) => {
+      const localeLoaded = localeIsLoaded(locale)
+
+      // TODO: should fallback to all preferred locales before falling back to default
+
+      if (localeLoaded) {
+        console.warn(`Locale '${locale}' missing '${key}'`)
+      } else {
+        console.log(`Will load '${locale}' locale.`)
+        loadLocaleMessages(locale)
+      }
+      
+      return key
+    },
+  })
+
   setI18nLanguage(options.locale!)
   return i18n
 }
