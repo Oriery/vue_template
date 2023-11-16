@@ -46,9 +46,7 @@ export async function setI18nLanguage(locale: Locale) {
   }
 
   // load locale messages if the are not downloaded yet
-  if (!i18n.global.availableLocales.includes(locale)) {
-    await loadLocaleMessages(locale)
-  }
+  await loadLocaleMessages(locale, true)
 
   setLocale(locale)
   // TODO:
@@ -76,7 +74,9 @@ function setLocale(locale: Locale): void {
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const getResourceMessages = (r: any) => r.default || r
 
-export async function loadLocaleMessages(locale: Locale) {
+export async function loadLocaleMessages(locale: Locale, forceLoadEvenIfLoaded = false) {
+  if (localeIsLoaded(locale) && !forceLoadEvenIfLoaded) return
+
   // load locale messages
   const messages = await import(`./locales/${locale}.json`).then(
     getResourceMessages
@@ -86,6 +86,10 @@ export async function loadLocaleMessages(locale: Locale) {
   i18n.global.setLocaleMessage(locale, messages)
 
   return nextTick()
+}
+
+export function localeIsLoaded(locale: Locale): boolean {
+  return i18n.global.availableLocales.includes(locale)
 }
 
 // ref currentLocale

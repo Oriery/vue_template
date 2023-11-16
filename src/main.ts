@@ -1,5 +1,6 @@
 import './assets/main.css'
 import './index.css'
+import config from '@/config.json'
 
 import { createApp } from 'vue'
 import { createPinia } from 'pinia'
@@ -7,7 +8,6 @@ import { createPinia } from 'pinia'
 import App from './App.vue'
 import router from './router'
 import { setI18nLanguage, setupI18n } from './i18n'
-import en from './locales/en.json'
 
 // Vuetify
 import 'vuetify/styles'
@@ -27,10 +27,7 @@ const vuetify = createVuetify({
 const i18n = setupI18n({
   legacy: false,
   locale: navigator.language,
-  fallbackLocale: 'en',
-  messages: {
-    en
-  }
+  fallbackLocale: config.fallbackLocale,
 })
 
 
