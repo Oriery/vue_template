@@ -1,5 +1,5 @@
 <template>
   <div>
-    <h1>This is an About View</h1>
+    <h1>{{ $t('thisIsAnAboutView') }}</h1>
   </div>
 </template>

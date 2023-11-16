@@ -1,6 +1,6 @@
 <template>
   <main>
-    This is a Home View
+    {{ $t("thisIsAHomeView") }}
     <HelloWorld />
   </main>
 </template>

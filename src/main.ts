@@ -5,7 +5,9 @@ import { createApp } from 'vue'
 import { createPinia } from 'pinia'
 
 import App from './App.vue'
-import router from './router'
+import { setupRouter } from './router'
+import { setI18nLanguage, setupI18n } from './i18n'
+import en from './locales/en.json'
 
 // Vuetify
 import 'vuetify/styles'
@@ -22,8 +24,21 @@ const vuetify = createVuetify({
   },
 })
 
+const i18n = setupI18n({
+  legacy: false,
+  locale: navigator.language,
+  fallbackLocale: 'en',
+  messages: {
+    en
+  }
+})
+
+
 const app = createApp(App)
 
+const router = setupRouter(i18n)
+
+app.use(i18n)
 app.use(createPinia())
 app.use(router)
 app.use(vuetify)
