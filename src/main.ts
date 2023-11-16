@@ -5,7 +5,7 @@ import { createApp } from 'vue'
 import { createPinia } from 'pinia'
 
 import App from './App.vue'
-import { setupRouter } from './router'
+import router from './router'
 import { setI18nLanguage, setupI18n } from './i18n'
 import en from './locales/en.json'
 
@@ -35,8 +35,6 @@ const i18n = setupI18n({
 
 
 const app = createApp(App)
-
-const router = setupRouter(i18n)
 
 app.use(i18n)
 app.use(createPinia())

@@ -1,4 +1,4 @@
-import { nextTick, isRef } from 'vue'
+import { nextTick, isRef, ref, watch } from 'vue'
 import { createI18n } from 'vue-i18n'
 import config from '@/config.json'
 
@@ -13,6 +13,8 @@ import type {
 
 export const SUPPORT_LOCALES = config.availableLocales
 
+let i18n: I18n
+
 function isComposer(
   instance: VueI18n | Composer,
   mode: I18nMode
@@ -20,7 +22,7 @@ function isComposer(
   return mode === 'composition' && isRef(instance.locale)
 }
 
-export function getLocale(i18n: I18n): string {
+export function getLocale(): string {
   if (isComposer(i18n.global, i18n.mode)) {
     return i18n.global.locale.value
   } else {
@@ -33,22 +35,22 @@ export function isLocaleSupported(locale: Locale): boolean {
 }
 
 export function setupI18n(options: I18nOptions = { locale: 'en' }): I18n {
-  const i18n = createI18n(options)
-  setI18nLanguage(i18n, options.locale!)
+  i18n = createI18n(options)
+  setI18nLanguage(options.locale!)
   return i18n
 }
 
-export async function setI18nLanguage(i18n: I18n, locale: Locale) {
+export async function setI18nLanguage(locale: Locale) {
   if (!isLocaleSupported(locale)) {
     throw new Error(`Locale not supported: ${locale}`)
   }
 
   // load locale messages if the are not downloaded yet
   if (!i18n.global.availableLocales.includes(locale)) {
-    await loadLocaleMessages(i18n, locale)
+    await loadLocaleMessages(locale)
   }
 
-  setLocale(i18n, locale)
+  setLocale(locale)
   // TODO:
   /**
    * NOTE:
@@ -58,9 +60,12 @@ export async function setI18nLanguage(i18n: I18n, locale: Locale) {
    * axios.defaults.headers.common['Accept-Language'] = locale
    */
   document.querySelector('html')!.setAttribute('lang', locale)
+
+  // update ref
+  currentLocale.value = locale
 }
 
-function setLocale(i18n: I18n, locale: Locale): void {
+function setLocale(locale: Locale): void {
   if (isComposer(i18n.global, i18n.mode)) {
     i18n.global.locale.value = locale
   } else {
@@ -71,7 +76,7 @@ function setLocale(i18n: I18n, locale: Locale): void {
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const getResourceMessages = (r: any) => r.default || r
 
-export async function loadLocaleMessages(i18n: I18n, locale: Locale) {
+export async function loadLocaleMessages(locale: Locale) {
   // load locale messages
   const messages = await import(`./locales/${locale}.json`).then(
     getResourceMessages
@@ -82,3 +87,11 @@ export async function loadLocaleMessages(i18n: I18n, locale: Locale) {
 
   return nextTick()
 }
+
+// ref currentLocale
+export const currentLocale = ref('none')
+
+watch(currentLocale, (val) => {
+  if (val === getLocale()) return
+  setI18nLanguage(val)
+})

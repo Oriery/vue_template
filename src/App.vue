@@ -1,7 +1,8 @@
 <template>
-  <header>
+  <header class="flex flex-col align-center gap-2">
     <p class="underline">This text is styled with underline by Tailwind</p>
     <v-btn>Vuetify button</v-btn>
+    <LangPicker class="min-w-[10rem]"/>
 
     <nav class="flex flex-row gap-2 justify-center">
       <RouterLink
@@ -20,6 +21,7 @@
 
 <script setup lang="ts">
 import { RouterLink, RouterView } from 'vue-router'
+import LangPicker from './components/LangPicker.vue'
 
 const links = [
   { name: 'Home', path: '/' },
