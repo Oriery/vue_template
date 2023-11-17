@@ -2,23 +2,24 @@ import { nextTick, isRef, ref, watch } from 'vue'
 import { createI18n } from 'vue-i18n'
 import config from '@/config.json'
 
-import type {
-  I18n,
-  I18nOptions,
-  Locale,
-  VueI18n,
-  Composer,
-  I18nMode
-} from 'vue-i18n'
+import type { I18n, I18nOptions, Locale, VueI18n, Composer, I18nMode } from 'vue-i18n'
 
-export const SUPPORT_LOCALES = config.availableLocales
+export const SUPPORTED_LOCALES = config.availableLocales
+export const PREFERRED_SUPPORTED_LOCALES = navigator.languages.filter((locale) =>
+  SUPPORTED_LOCALES.includes(locale),
+)
+
+if (!SUPPORTED_LOCALES.includes(navigator.language)) {
+  console.warn(`Most preferred locale '${navigator.language}' is not supported. Will use another.`)
+}
+
+if (!PREFERRED_SUPPORTED_LOCALES.length) {
+  console.warn('No supported locales found. Defaulting to fallback locale.')
+}
 
 let i18n: I18n
 
-function isComposer(
-  instance: VueI18n | Composer,
-  mode: I18nMode
-): instance is Composer {
+function isComposer(instance: VueI18n | Composer, mode: I18nMode): instance is Composer {
   return mode === 'composition' && isRef(instance.locale)
 }
 
@@ -31,10 +32,16 @@ export function getLocale(): string {
 }
 
 export function isLocaleSupported(locale: Locale): boolean {
-  return SUPPORT_LOCALES.includes(locale)
+  return SUPPORTED_LOCALES.includes(locale)
 }
 
-export function setupI18n(options: I18nOptions = { locale: 'en' }): I18n {
+export function setupI18n(
+  options: I18nOptions = {
+    legacy: false,
+    locale: PREFERRED_SUPPORTED_LOCALES[0] ?? navigator.language,
+    fallbackLocale: config.fallbackLocale,
+  },
+): I18n {
   i18n = createI18n({
     ...options,
     missing: (locale, key, vm) => {
@@ -48,7 +55,7 @@ export function setupI18n(options: I18nOptions = { locale: 'en' }): I18n {
         console.log(`Will load '${locale}' locale.`)
         loadLocaleMessages(locale)
       }
-      
+
       return key
     },
   })
@@ -95,9 +102,7 @@ export async function loadLocaleMessages(locale: Locale, forceLoadEvenIfLoaded =
   if (localeIsLoaded(locale) && !forceLoadEvenIfLoaded) return
 
   // load locale messages
-  const messages = await import(`./locales/${locale}.json`).then(
-    getResourceMessages
-  )
+  const messages = await import(`./locales/${locale}.json`).then(getResourceMessages)
 
   // set locale and locale message
   i18n.global.setLocaleMessage(locale, messages)
