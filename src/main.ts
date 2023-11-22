@@ -4,6 +4,10 @@ import config from '@/config.json'
 
 import { createApp } from 'vue'
 import { createPinia } from 'pinia'
+import { createNotivue } from 'notivue'
+
+import 'notivue/notifications.css' // Only needed if using built-in notifications 
+import 'notivue/animations.css' // Only needed if using built-in animations 
 
 import App from './App.vue'
 import router from './router'
@@ -33,4 +37,6 @@ app.use(createPinia())
 app.use(router)
 app.use(vuetify)
 
+// pushNotify must be exported at the END of plugins chain, just before mounting the app
+export const pushNotify = createNotivue(app)
 app.mount('#app')

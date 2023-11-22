@@ -17,7 +17,9 @@
   },
   "dependencies": {
     "@mdi/font": "^7.3.67",
+    "notivue": "^1.4.4",
     "pinia": "^2.1.6",
+    "unimport": "^3.6.0",
     "vue": "^3.3.8",
     "vue-i18n": "^9.7.0",
     "vue-router": "^4.2.5",
