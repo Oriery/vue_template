@@ -1,6 +1,5 @@
 import './assets/main.css'
 import './index.css'
-import config from '@/config.json'
 
 import { createApp } from 'vue'
 import { createPinia } from 'pinia'
@@ -11,7 +10,7 @@ import 'notivue/animations.css' // Only needed if using built-in animations
 
 import App from './App.vue'
 import router from './router'
-import { PREFERRED_SUPPORTED_LOCALES, setI18nLanguage, setupI18n } from './i18n'
+import { setupI18n } from './i18n'
 
 // Vuetify
 import 'vuetify/styles'
