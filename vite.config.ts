@@ -16,14 +16,14 @@ export default defineConfig({
       imports: [
         {
           name: 'pushNotify',
-          from: fileURLToPath(new URL('src/main.ts', import.meta.url)),
+          from: fileURLToPath(new URL('src/main.ts', import.meta.url)).replaceAll('\\', '\\\\'),
         },
       ],
     }),
   ],
   resolve: {
     alias: {
-      '@': fileURLToPath(new URL('./src', import.meta.url)),
+      '@': fileURLToPath(new URL('./src', import.meta.url)).replaceAll('\\', '\\\\'),
     },
   },
 })
